@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.Composable
 import androidx.compose.getValue
+import androidx.compose.key
 import androidx.compose.setValue
 import androidx.compose.state
 import androidx.ui.core.Modifier
@@ -40,13 +41,13 @@ class MainActivity : AppCompatActivity() {
                         color = MaterialTheme.colors.onBackground,
                         modifier = Modifier.padding(16.dp).clickable { isDarkTheme = !isDarkTheme })
                     val (list, setList) = state { listOf<TipsEntry>() }
-                    Tips(list) { old, new ->
-                        if (old == null && new != null) {
+                    Tips(list) { position, new ->
+                        if (position >= list.size && new != null) {
                             setList(list + new)
                         } else if (new != null) {
-                            setList(list.map { if (it == old) new else it })
-                        } else if (old != null) {
-                            setList(list.filterNot { it == old })
+                            setList(list.mapIndexed { i, it -> if (i == position) new else it })
+                        } else {
+                            setList(list.toMutableList().apply { removeAt(position) })
                         }
                     }
                 }
@@ -59,10 +60,13 @@ class MainActivity : AppCompatActivity() {
  * @sample DefaultPreview
  */
 @Composable
-fun Tips(tips: List<TipsEntry>, onEntryChanged: (old: TipsEntry?, new: TipsEntry?) -> Unit) {
+fun Tips(tips: List<TipsEntry>, onEntryChanged: (position: Int, new: TipsEntry?) -> Unit) {
     Column(modifier = Modifier.padding(16.dp)) {
         (tips + null as TipsEntry?).forEach { entry ->
-            Entry(entry, onEntryChanged)
+            val index = tips.indexOf(entry).let { index -> if (index < 0) tips.size else index }
+            key(index) {
+                Entry(index, entry, onEntryChanged)
+            }
         }
         Text(
             text = "Total: %.02f".format(tips.sumByDouble { it.total.toDouble() }),

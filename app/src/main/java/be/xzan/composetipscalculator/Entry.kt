@@ -19,8 +19,9 @@ import be.xzan.composetipscalculator.entity.TipsEntry
 
 @Composable
 fun Entry(
+    position: Int,
     entry: TipsEntry?,
-    onEntryChanged: (old: TipsEntry?, new: TipsEntry?) -> Unit
+    onEntryChanged: (position: Int, new: TipsEntry?) -> Unit
 ) {
     ConstraintLayout(
         modifier = Modifier.padding(bottom = 8.dp).fillMaxWidth()
@@ -42,7 +43,7 @@ fun Entry(
                         "."
                     ).toFloat().let { if (it <= 0f) null else it }
                     onEntryChanged(
-                        entry,
+                        position,
                         value?.let { entry?.copy(amount = value) ?: TipsEntry(value) })
                 } catch (e: NumberFormatException) {
                     // ignored
@@ -54,7 +55,7 @@ fun Entry(
                 start.linkTo(amountConstraint.end, margin = 8.dp)
                 centerVerticallyTo(parent)
             }, entry) { percent ->
-                onEntryChanged(entry, entry.copy(percent = percent))
+                onEntryChanged(position, entry.copy(percent = percent))
             }
             Text(
                 modifier = Modifier.constrainAs(createRef()) {
@@ -68,7 +69,7 @@ fun Entry(
                 modifier = Modifier.constrainAs(deleteConstraint) {
                     end.linkTo(parent.end, margin = 8.dp)
                     centerVerticallyTo(parent)
-                }.clickable { onEntryChanged(entry, null) },
+                }.clickable { onEntryChanged(position, null) },
                 asset = imageResource(android.R.drawable.ic_delete)
             )
         }
@@ -79,6 +80,6 @@ fun Entry(
 @Composable
 fun PreviewEntry() {
     MaterialTheme {
-        Entry(TipsEntry()) { _, _ -> }
+        Entry(0, TipsEntry()) { _, _ -> }
     }
 }
