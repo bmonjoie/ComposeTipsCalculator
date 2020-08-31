@@ -1,20 +1,21 @@
 package be.xzan.composetipscalculator
 
-import androidx.compose.Composable
-import androidx.ui.core.Modifier
-import androidx.ui.foundation.Image
-import androidx.ui.foundation.Text
-import androidx.ui.foundation.clickable
-import androidx.ui.input.KeyboardType
-import androidx.ui.layout.ConstraintLayout
-import androidx.ui.layout.Dimension
-import androidx.ui.layout.fillMaxWidth
-import androidx.ui.layout.padding
-import androidx.ui.material.FilledTextField
-import androidx.ui.material.MaterialTheme
-import androidx.ui.res.imageResource
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.Text
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.ConstraintLayout
+import androidx.compose.foundation.layout.Dimension
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
-import androidx.ui.unit.dp
 import be.xzan.composetipscalculator.entity.TipsEntry
 
 @Composable
@@ -27,7 +28,7 @@ fun Entry(
         modifier = Modifier.padding(bottom = 8.dp).fillMaxWidth()
     ) {
         val (amountConstraint, deleteConstraint) = createRefs()
-        FilledTextField(
+        TextField(
             modifier = Modifier.constrainAs(amountConstraint) {
                 start.linkTo(parent.start)
                 centerVerticallyTo(parent)

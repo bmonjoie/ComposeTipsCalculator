@@ -1,20 +1,19 @@
 package be.xzan.composetipscalculator
 
-import androidx.compose.Composable
-import androidx.compose.getValue
-import androidx.compose.setValue
-import androidx.compose.state
-import androidx.ui.core.Modifier
-import androidx.ui.foundation.Text
-import androidx.ui.foundation.VerticalScroller
-import androidx.ui.foundation.clickable
-import androidx.ui.foundation.drawBackground
-import androidx.ui.layout.padding
-import androidx.ui.material.DropdownMenu
-import androidx.ui.material.DropdownMenuItem
-import androidx.ui.material.MaterialTheme
-import androidx.ui.unit.Position
-import androidx.ui.unit.dp
+import androidx.compose.foundation.ScrollableColumn
+import androidx.compose.foundation.Text
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Position
+import androidx.compose.ui.unit.dp
 import be.xzan.composetipscalculator.entity.TipsEntry
 
 @Composable
@@ -23,20 +22,20 @@ fun PercentDropdown(
     entry: TipsEntry,
     onPercentageSelected: (percentage: Int) -> Unit = {}
 ) {
-    var opened by state { false }
+    val opened = remember { mutableStateOf(false) }
     DropdownMenu(
-        dropdownModifier = Modifier.padding(16.dp).drawBackground(color = MaterialTheme.colors.background),
+        dropdownModifier = Modifier.padding(16.dp).background(color = MaterialTheme.colors.background),
         dropdownOffset = Position((-40).dp, 0.dp),
         toggle = { Text(text = "%d%%".format(entry.percent), color = MaterialTheme.colors.onBackground) },
-        toggleModifier = modifier.clickable { opened = !opened },
-        expanded = opened, onDismissRequest = { opened = false }) {
-        VerticalScroller {
+        toggleModifier = modifier.clickable { opened.value = !opened.value },
+        expanded = opened.value, onDismissRequest = { opened.value = false }) {
+        ScrollableColumn {
             (0..100).forEach {
                 DropdownMenuItem(
                     onClick = {}) {
                     Text(
                         modifier = Modifier.clickable {
-                            opened = false
+                            opened.value = false
                             onPercentageSelected(it)
                         },
                         color = MaterialTheme.colors.onBackground,
