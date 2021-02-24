@@ -15,9 +15,11 @@ import androidx.compose.material.Text
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,9 +30,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val isDarkTheme = remember { mutableStateOf(false) }
+            var isDarkTheme by remember { mutableStateOf(false) }
             MaterialTheme(
-                colors = if (isDarkTheme.value) darkColors() else lightColors()
+                colors = if (isDarkTheme) darkColors() else lightColors()
             ) {
                 Column(
                     Modifier
@@ -39,19 +41,19 @@ class MainActivity : AppCompatActivity() {
                         .fillMaxHeight()
                 ) {
                     Text(
-                        if (isDarkTheme.value) "Light theme" else "Dark theme",
+                        if (isDarkTheme) "Light theme" else "Dark theme",
                         color = MaterialTheme.colors.onBackground,
                         modifier = Modifier
                             .padding(16.dp)
-                            .clickable { isDarkTheme.value = !isDarkTheme.value })
-                    val (list, setList) = remember { mutableStateOf(listOf<TipsEntry>()) }
+                            .clickable { isDarkTheme = !isDarkTheme })
+                    var list by remember { mutableStateOf(listOf<TipsEntry>()) }
                     Tips(list) { position, new ->
                         if (position >= list.size && new != null) {
-                            setList(list + new)
+                            list = list + new
                         } else if (new != null) {
-                            setList(list.mapIndexed { i, it -> if (i == position) new else it })
+                            list = list.mapIndexed { i, it -> if (i == position) new else it }
                         } else if (position < list.size) {
-                            setList(list.toMutableList().apply { removeAt(position) })
+                            list = list.toMutableList().apply { removeAt(position) }
                         }
                     }
                 }

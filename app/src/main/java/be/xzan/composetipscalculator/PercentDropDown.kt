@@ -11,7 +11,10 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import be.xzan.composetipscalculator.entity.TipsEntry
 
@@ -21,22 +24,23 @@ fun PercentDropdown(
     entry: TipsEntry,
     onPercentageSelected: (percentage: Int) -> Unit = {}
 ) {
-    val opened = remember { mutableStateOf(false) }
+    var opened by remember { mutableStateOf(false) }
     Box(modifier) {
         Text(
             text = "%d%%".format(entry.percent),
             color = MaterialTheme.colors.onBackground,
-            modifier = Modifier.clickable { opened.value = !opened.value }
+            modifier = Modifier.clickable { opened = !opened }
         )
         DropdownMenu(
             modifier = Modifier.padding(16.dp)
                 .background(color = MaterialTheme.colors.background),
-            expanded = opened.value, onDismissRequest = { opened.value = false }
+            expanded = opened,
+            onDismissRequest = { opened = false },
         ) {
             (0..100).forEach {
                 DropdownMenuItem(
                     onClick = {
-                        opened.value = false
+                        opened = false
                         onPercentageSelected(it)
                     }) {
                     Text(
@@ -48,4 +52,10 @@ fun PercentDropdown(
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun PercentDropdownPreview() {
+    PercentDropdown(modifier = Modifier, entry = TipsEntry())
 }
